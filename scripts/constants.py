@@ -1,0 +1,55 @@
+SCREEN_HEIGHT = 750
+SCREEN_WIDTH = 1500
+SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
+
+CAPTION = "Kitty Run"
+
+TILE_SIZE = 32
+
+GROUND_HEIGHT = SCREEN_HEIGHT - (2 * TILE_SIZE)
+ENEMY_HEIGHT = 3 * TILE_SIZE
+SIZE_MULTIPLIER = 3
+
+# PLAYER FORCES
+WALK_ACCEL = .15
+RUN_ACCEL = .20
+TURNABOUT = .35
+
+GRAVITY = 1.01
+JUMP_GRAVITY = .31
+JUMP_VEL = -10
+FAST_JUMP_VEL = -11
+MAX_Y_VEL = 11
+BUMP_VEL = 7
+
+MAX_RUN_SPEED = 800
+MAX_WALK_SPEED = 6
+MIN_WALK_SPEED = 0.5
+
+# PLAYER STATES
+STAND = 'standing'
+WALK = 'walking'
+JUMP = 'jumping'
+FALL = 'falling'
+HURT = 'hurting'
+SHOOT = 'shooting'
+
+# ENEMY STATES
+FLAP = 'flapping'
+SWOOP = 'swooping'
+#SHOOT = 'shooting'
+SPAWN = 'spawning'
+#HURT = 'hurting'
+
+# KEYBINDING
+UP = 'up'
+LEFT = 'left'
+RIGHT = 'right'
+DOWN = 'down'
+ACTION = 'action'
+
+# GAME STATES
+MAIN_MENU = 'main menu'
+LOAD_SCREEN = 'load screen'
+GAME_OVER = 'game over'
+RUNNING = 'running'
