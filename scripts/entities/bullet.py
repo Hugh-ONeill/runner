@@ -1,13 +1,15 @@
 import pygame
 import random
 import math
-import scripts.constants as c
-import scripts.tools as tools
+
+import scripts.utils.constants as c
+import scripts.utils.tools as tools
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, angle, x:int=0, y:int=0):
         super().__init__()
-        self.bullet = tools.get_sprite('bullet', 0, 0, 8, 8)
+        self.bullet = tools.get_sprite('general', 'bullet', 0, 0, 8, 8)
         self.rect = self.bullet.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
@@ -20,7 +22,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
-        #print("new bullet created")
     
     def update(self):
         # Remove when off the screen
@@ -30,7 +31,3 @@ class Bullet(pygame.sprite.Sprite):
     def adjust_position(self):
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
-
-    def kill(self):
-        #print("bullet destroyed")
-        super().kill()

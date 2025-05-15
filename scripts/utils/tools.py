@@ -1,5 +1,7 @@
 import pygame
-import scripts.constants as c
+
+import scripts.utils.constants as c
+
 
 def keybinding(keys, binding):
     if keys:
@@ -15,8 +17,8 @@ def keybinding(keys, binding):
             case c.ACTION:
                 return keys[pygame.K_c] or pygame.mouse.get_pressed()[0]
 
-def get_sprite(sprite_sheet_filename: str, x:int = 0, y:int = 0, width:int = c.TILE_SIZE, height:int = c.TILE_SIZE):
-    sprite_sheet = pygame.image.load(f"data/{sprite_sheet_filename}.png").convert_alpha()
+def get_sprite(sprite_folder: str, sprite_filename: str, x:int = 0, y:int = 0, width:int = c.TILE_SIZE, height:int = c.TILE_SIZE):
+    sprite_sheet = pygame.image.load(f"data/{sprite_folder}/{sprite_filename}.png").convert_alpha()
     image = pygame.Surface([width, height])
     rect = image.get_rect()
     image.blit(sprite_sheet, (0, 0), (x, y, width, height))
@@ -26,5 +28,5 @@ def get_sprite(sprite_sheet_filename: str, x:int = 0, y:int = 0, width:int = c.T
         int(rect.height * c.SIZE_MULTIPLIER)))
     return image
 
-def get_sprites(sprite_sheet_filename_base: str, frames:int, x:int = 0, y:int = 0, width:int = c.TILE_SIZE, height:int = c.TILE_SIZE):
-    return [get_sprite(f"{sprite_sheet_filename_base}_{frame}", x, y, width, height) for frame in range(frames)]
+def get_sprites(sprite_folder: str, sprite_filename_base: str, frames:int, x:int = 0, y:int = 0, width:int = c.TILE_SIZE, height:int = c.TILE_SIZE):
+    return [get_sprite(sprite_folder, f"{sprite_filename_base}_{frame}", x, y, width, height) for frame in range(frames)]

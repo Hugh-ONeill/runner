@@ -1,17 +1,19 @@
 import pygame
-import scripts.constants as c
-import scripts.tools as tools
 import random
 import math
-from scripts.bullet import Bullet
+
+import scripts.utils.constants as c
+import scripts.utils.tools as tools
+from scripts.entities.bullet import Bullet
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, bullet_group: pygame.sprite.Group):
         super().__init__()
         self.image = pygame.Surface([c.TILE_SIZE, c.TILE_SIZE])
-        self.frames = tools.get_sprites('enemy', 8)
-        self.hurting_images = tools.get_sprites('enemy_hurting', 4)
-        self.shooting_images = tools.get_sprites('enemy_shooting', 4)
+        self.frames = tools.get_sprites('enemy', 'enemy', 8)
+        self.hurting_images = tools.get_sprites('enemy', 'enemy_hurting', 4)
+        self.shooting_images = tools.get_sprites('enemy', 'enemy_shooting', 4)
         self.frame = 0
         self.dt = 0.0
         self.current_time = 0.0

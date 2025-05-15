@@ -2,7 +2,7 @@ import pygame
 import asyncio
 import sys
 from scripts.game import Game
-import scripts.constants as c
+import scripts.utils.constants as c
 
 async def main():
     

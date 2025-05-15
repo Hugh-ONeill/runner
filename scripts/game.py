@@ -1,13 +1,14 @@
 import pygame
 import random
-from scripts.ground import Ground
-from scripts.enemy import Enemy
-from scripts.player import Player
-from scripts.bullet import Bullet
-from scripts.reticle import Reticle
-from scripts.scenery import Scenery
-from scripts import constants as c
-from scripts import tools as tools
+
+from scripts.entities.ground import Ground
+from scripts.entities.enemy import Enemy
+from scripts.entities.player import Player
+from scripts.entities.bullet import Bullet
+from scripts.entities.reticle import Reticle
+from scripts.entities.scenery import Scenery
+import scripts.utils.constants as c
+import scripts.utils.tools as tools
 
 
 class Game:

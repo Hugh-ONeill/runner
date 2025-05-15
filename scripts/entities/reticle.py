@@ -1,13 +1,11 @@
 import pygame
-import random
-import math
-import scripts.constants as c
-import scripts.tools as tools
+
+import scripts.utils.tools as tools
 
 class Reticle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.frames = tools.get_sprites('reticle', 8, 0, 0, 16, 16)
+        self.frames = tools.get_sprites('reticle', 'reticle', 8, 0, 0, 16, 16)
         self.frame = 0
         self.image = self.frames[self.frame]
         self.rect = self.image.get_rect()

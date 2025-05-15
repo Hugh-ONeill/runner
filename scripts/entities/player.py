@@ -1,17 +1,19 @@
 import math
 import pygame
-from scripts.bullet import Bullet
-import scripts.constants as c
-import scripts.tools as tools
+
+import scripts.utils.constants as c
+import scripts.utils.tools as tools
+from scripts.entities.bullet import Bullet
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, bullet_group: pygame.sprite.Group):
         super().__init__()
-        self.falling_sprite = tools.get_sprite("falling")
-        self.frames = tools.get_sprites("running", 12)
-        self.jumping_sprite = tools.get_sprite("jumping")
-        self.hurting_sprites = tools.get_sprites("hurting", 4)
-        self.standing_sprite = tools.get_sprite("standing")
+        self.falling_sprite = tools.get_sprite('player', "falling")
+        self.frames = tools.get_sprites('player', "running", 12)
+        self.jumping_sprite = tools.get_sprite('player', "jumping")
+        self.hurting_sprites = tools.get_sprites('player', "hurting", 4)
+        self.standing_sprite = tools.get_sprite('player', "standing")
         self.image = self.frames[0]
         self.rect = self.image.get_rect()
         self.rect.x = c.TILE_SIZE

@@ -1,16 +1,17 @@
 import pygame
 import random
 import math
-import scripts.constants as c
-import scripts.tools as tools
+
+import scripts.utils.constants as c
+import scripts.utils.tools as tools
 
 
 class Scenery():
     def __init__(self):
-        self.backgrounds = tools.get_sprites('background', 4, 0, 0, 512, 300)
-        self.trees = tools.get_sprite('trees', 0, 0, 512, 300)
-        self.frontleaves = tools.get_sprite('frontleaves', 0, 0, 512, 300)
-        self.bushes = tools.get_sprite('bushes', 0, 0, 512, 300)
+        self.backgrounds = tools.get_sprites('scenery', 'background', 4, 0, 0, 512, 300)
+        self.trees = tools.get_sprite('scenery', 'trees', 0, 0, 512, 300)
+        self.frontleaves = tools.get_sprite('scenery', 'frontleaves', 0, 0, 512, 300)
+        self.bushes = tools.get_sprite('scenery', 'bushes', 0, 0, 512, 300)
         self.tiles = math.ceil(c.SCREEN_WIDTH / 512) + 1
         self.layers = [SceneLayer(self.backgrounds[layer], index, self.tiles) for index, layer in enumerate(range(3, 0, -1))]
         self.layers.append(SceneLayer(self.trees, 4, self.tiles))

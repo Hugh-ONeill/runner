@@ -1,15 +1,17 @@
 import pygame
 import random
 import math
-import scripts.constants as c
-import scripts.tools as tools
+
+import scripts.utils.constants as c
+import scripts.utils.tools as tools
+
 
 class Ground(pygame.sprite.Sprite):
     def __init__(self, x):
         super().__init__()
         self.image = pygame.Surface([c.SCREEN_WIDTH, c.SCREEN_HEIGHT])
         self.image.fill((0, 255, 0))
-        self.image = tools.get_sprite('ground', 0, 0, 500)
+        self.image = tools.get_sprite('general', 'ground', 0, 0, 500)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.top = c.GROUND_HEIGHT
@@ -27,7 +29,7 @@ class Ground(pygame.sprite.Sprite):
         if self.rect.right < (-1 * self.chasm):
             # Reset position with randomized height and width
             self.chasm = abs(random.gauss(8 * c.TILE_SIZE, 4 * c.TILE_SIZE))
-            self.image = tools.get_sprite('ground', 0, 0, 500 - self.chasm // 3)
+            self.image = tools.get_sprite('general', 'ground', 0, 0, 500 - self.chasm // 3)
             self.rect = self.image.get_rect()
             self.rect.x = c.SCREEN_WIDTH
             self.rect.top = c.GROUND_HEIGHT - abs(random.gauss(0, c.TILE_SIZE))
