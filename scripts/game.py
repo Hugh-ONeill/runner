@@ -9,6 +9,7 @@ from scripts.entities.reticle import Reticle
 from scripts.entities.scenery import Scenery
 import scripts.utils.constants as c
 import scripts.utils.tools as tools
+from scripts.utils.button import Button
 
 
 class Game:
@@ -33,6 +34,7 @@ class Game:
         self.enemy_group = pygame.sprite.Group()
         self.bullet_group = pygame.sprite.Group()
         self.enemy_bullet_group = pygame.sprite.Group()
+        self.menu_sprites = pygame.sprite.Group()
         self.player = Player(self.bullet_group)
         self.all_sprites.add([self.player])
         self.grounds = [Ground(c.SCREEN_WIDTH * platform) for platform in range(2)]
@@ -47,17 +49,33 @@ class Game:
     def loop(self):
         self.clock.tick(self.fps)
         while self.running:
-            [self.event_controls(event) for event in pygame.event.get()]
-            self.update()
-            self.render()
-            self.dt = self.clock.tick(self.fps) / 1000.0
-            self.current_time += self.dt
+            
+            if self.paused == True:
+                
+                self.pause_menu()
+            else:
+                [self.event_controls(event) for event in pygame.event.get()]
+                self.update()
+                self.render()
+                self.dt = self.clock.tick(self.fps) / 1000.0
+                self.current_time += self.dt
+
+    def resume(self):
+        self.paused = False
+
+    def pause_menu(self):
+        self.menu_sprites.add(Button(c.SCREEN_WIDTH // 2, c.SCREEN_HEIGHT // 2, self.resume))
+        self.menu_sprites.add(self.reticle)
+        self.menu_sprites.update()
+        self.render_menu()
 
     def event_controls(self, event: pygame.event.Event):
         if event.type == pygame.QUIT:
             self.running = False
         elif event.type == pygame.KEYDOWN or pygame.KEYUP or pygame.MOUSEBUTTONDOWN:
             self.keys = pygame.key.get_pressed()
+            if self.keys[pygame.K_p]:
+                self.paused = True
 
     def update(self):
         ground_speed = self.ground_group.update(self.current_time)
@@ -94,4 +112,10 @@ class Game:
         self.window.fill((0, 0, 0))
         self.scenery.draw(self.window)
         self.all_sprites.draw(self.window)
+        pygame.display.update()
+
+    def render_menu(self):
+        #self.window.fill((0, 0, 0))
+        #self.window.set_alpha(50)
+        self.menu_sprites.draw(self.window)
         pygame.display.update()

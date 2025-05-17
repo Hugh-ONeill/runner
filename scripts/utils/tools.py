@@ -1,4 +1,5 @@
 import pygame
+import os
 
 import scripts.utils.constants as c
 
@@ -18,7 +19,7 @@ def keybinding(keys, binding):
                 return keys[pygame.K_c] or pygame.mouse.get_pressed()[0]
 
 def get_sprite(sprite_folder: str, sprite_filename: str, x:int = 0, y:int = 0, width:int = c.TILE_SIZE, height:int = c.TILE_SIZE):
-    sprite_sheet = pygame.image.load(f"data/{sprite_folder}/{sprite_filename}.png").convert_alpha()
+    sprite_sheet = pygame.image.load(os.path.join('data', sprite_folder, f"{sprite_filename}.png")).convert_alpha()
     image = pygame.Surface([width, height])
     rect = image.get_rect()
     image.blit(sprite_sheet, (0, 0), (x, y, width, height))

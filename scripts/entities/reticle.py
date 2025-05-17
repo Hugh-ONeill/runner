@@ -13,7 +13,7 @@ class Reticle(pygame.sprite.Sprite):
         self.current_time = 0.0
         self.reticle_timer = 0.0
 
-    def update(self, delta_time: float):
+    def update(self, delta_time: float = 0):
         self.dt = delta_time
         self.current_time += self.dt
         mx, my = pygame.mouse.get_pos()
