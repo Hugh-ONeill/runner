@@ -61,25 +61,22 @@ class Enemy(pygame.sprite.Sprite):
                     self.action_timer = self.current_time
                     self.swoop_timer = self.current_time
                     self.shoot_timer = self.current_time
+                    self.hurt_timer = self.current_time
             case c.SWOOP:
-                if self.current_time - self.swoop_timer < 10:
-                    self.swooping()
-                else:
+                self.swooping()
+                if self.current_time - self.swoop_timer > 10:
                     self.action_timer = self.current_time
                     self.swoop_timer = self.current_time
                     self.state = c.FLAP
             case c.SHOOT:
-                if self.current_time - self.shoot_timer < 1:
-                    self.shooting()
-                else:
+                self.shooting()
+                if self.current_time - self.shoot_timer > 1:
                     self.action_timer = self.current_time
                     self.shoot_timer = self.current_time
                     self.state = c.FLAP
             case c.HURT:
-                if self.current_time - self.hurt_timer < 1:
-                    self.hurting()
-                else:
-                    self.action_timer = self.current_time
+                self.hurting()
+                if self.current_time - self.hurt_timer > 2:
                     self.hurt_timer = self.current_time
                     self.state = c.FLAP
 
@@ -143,7 +140,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def hurting(self):
         self.state = c.HURT
-        self.image = self.hurting_images[0]
+        #self.image = self.hurting_images[0]
         if self.health == 0:
             self.kill()
 
