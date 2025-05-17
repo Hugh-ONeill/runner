@@ -1,4 +1,4 @@
-# Kitty Runner
+# Kitty Runner ![gameplay](data/resource/running.gif)
 
 ## Infinite Scrolling Run'n'Gun made with Pygame
 
