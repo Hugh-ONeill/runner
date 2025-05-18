@@ -15,7 +15,7 @@ from scripts.utils.button import Button
 class Game:
     def __init__(self):
         self.window = pygame.display.set_mode(c.SCREEN_SIZE)
-        self.font = pygame.font.SysFont(None, 100)
+        self.font = pygame.font.SysFont(None, c.TILE_SIZE)
         self.clock = pygame.time.Clock()
         self.fps = 60
         # Forces
@@ -26,6 +26,7 @@ class Game:
         self.running = True
         self.paused = False
         self.keys = {}
+        self.score = 0
         # Scenery
         self.scenery = Scenery()
         # Load Objects
@@ -78,7 +79,10 @@ class Game:
                 self.paused = True
 
     def update(self):
-        ground_speed = self.ground_group.update(self.current_time)
+        for ground in self.ground_group:
+            ground_speed = ground.update(self.current_time)
+        if not ground_speed:
+            ground_speed = 0.0
         self.scenery.update(ground_speed)
         bullets = self.player.update(self.dt, ground_speed, self.keys)
         if bullets:
@@ -101,9 +105,12 @@ class Game:
         [ground.adjust_position() for ground in self.ground_group]
         self.scenery.adjust_position()
         self.player.adjust_position(self.ground_group, self.enemy_group, self.enemy_bullet_group)
+        for enemy in self.enemy_group:
+            self.score += enemy.adjust_position(self.bullet_group)
         [enemy.adjust_position(self.bullet_group) for enemy in self.enemy_group]
         [bullet.adjust_position() for bullet in self.bullet_group]
         [bullet.adjust_position() for bullet in self.enemy_bullet_group]
+        self.score += ground_speed * self.dt
         # Adjust Player State
         if not self.player.alive:
             self.running = False
@@ -112,10 +119,13 @@ class Game:
         self.window.fill((0, 0, 0))
         self.scenery.draw(self.window)
         self.all_sprites.draw(self.window)
+        font_render = self.font.render(f"score: {int(self.score)}", True, (255, 255, 255))
+        health_render = self.font.render(f"health: {self.player.health}", True, (255, 255, 255))
+        self.window.blit(font_render, (0, 0))
+        self.window.blit(health_render, (0, c.TILE_SIZE))
         pygame.display.update()
 
     def render_menu(self):
         #self.window.fill((0, 0, 0))
-        #self.window.set_alpha(50)
         self.menu_sprites.draw(self.window)
         pygame.display.update()

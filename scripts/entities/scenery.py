@@ -46,4 +46,4 @@ class SceneLayer(pygame.sprite.Sprite):
         self.layer = layer
         self.tiles = tiles
         self.rect = self.image.get_rect()
-        self.speed_factor = self.layer
+        self.speed_factor = self.layer * 0.1

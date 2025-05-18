@@ -35,6 +35,7 @@ class Enemy(pygame.sprite.Sprite):
         self.bullets = bullet_group
         self.bullet_timer = 0
         self.health = 3
+        self.kill_bonus = 100
 
     def update(self, delta_time: float, player_position: [int]):
         self.dt = delta_time
@@ -44,11 +45,16 @@ class Enemy(pygame.sprite.Sprite):
         self.animate()
         return self.bullets
 
-    def adjust_position(self, bullet_group: pygame.sprite.Group):
+    def adjust_position(self, bullet_group: pygame.sprite.Group) -> int:
         #for bullet in bullet_group:
-        [self.adjust_for_collisions(bullet) for bullet in bullet_group if pygame.rect.Rect.colliderect(self.hitbox, bullet)]
+        #[self.adjust_for_collisions(bullet) for bullet in bullet_group if pygame.rect.Rect.colliderect(self.hitbox, bullet)]
+        bonus = 0
+        for bullet in bullet_group:
+            if pygame.rect.Rect.colliderect(self.hitbox, bullet):
+                bonus += self.adjust_for_collisions(bullet)
         #for bullet in pygame.sprite.spritecollide(self, bullet_group, False):
         #    self.adjust_for_collisions(bullet)
+        return bonus
 
     def action(self):
         match self.state:
@@ -119,7 +125,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def shooting(self):
         self.state = c.SHOOT
-        if self.current_time - self.bullet_timer > 1:
+        if self.current_time - self.bullet_timer > 2:
             bullet = Bullet(self.get_shooting_angle(), self.rect.centerx, self.rect.centery)
             #print("enemy shooting a bullet")
             self.bullets.add(bullet)
@@ -138,13 +144,16 @@ class Enemy(pygame.sprite.Sprite):
             self.state = c.FLAP
             self.action_timer = self.current_time
 
-    def hurting(self):
+    def hurting(self) -> int:
         self.state = c.HURT
         #self.image = self.hurting_images[0]
         if self.health == 0:
             self.kill()
+            return self.kill_bonus
+        else:
+            return 0
 
-    def adjust_for_collisions(self, bullet: Bullet):
+    def adjust_for_collisions(self, bullet: Bullet) -> int:
         bullet.kill()
         self.health -= 1
-        self.hurting()
+        return self.hurting()

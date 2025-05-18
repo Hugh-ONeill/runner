@@ -15,7 +15,7 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.top = c.GROUND_HEIGHT
-        self.speed = 1.0
+        self.speed = 0.0
         self.chasm = 0
         self.current_time = 0.0
 

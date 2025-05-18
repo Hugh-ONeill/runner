@@ -314,7 +314,7 @@ class Player(pygame.sprite.Sprite):
             self.x_vel = 0
         if not ground_speed:
             ground_speed = 0
-        animation_speed = 0.13 - self.x_vel * .013 * ground_speed
+        animation_speed = 0.13 - self.x_vel * .0013 * ground_speed
         return animation_speed
 
     # State Helpers
