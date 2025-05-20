@@ -107,8 +107,8 @@ class Game:
                 self.all_sprites.add(enemy_bullets)
         
         self.reticle.update(self.dt)
-        self.bullet_group.update()
-        self.enemy_bullet_group.update()
+        self.bullet_group.update(self.dt)
+        self.enemy_bullet_group.update(self.dt)
 
         # Adjust Sprite Positions
         [ground.adjust_position() for ground in self.ground_group]

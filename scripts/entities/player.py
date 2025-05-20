@@ -20,6 +20,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom = c.GROUND_HEIGHT
         # Forces
         self.dt = 0.0
+        self.true_x = self.rect.x
+        self.true_y = self.rect.y
         self.x_vel = 0.0
         self.y_vel = 0.0
         self.max_x_vel = c.MAX_WALK_SPEED
@@ -61,7 +63,9 @@ class Player(pygame.sprite.Sprite):
                 self.falling(keys)
 
     def adjust_position(self, ground_group: pygame.sprite.Group, enemy_group: pygame.sprite.Group, enemy_bullet_group: pygame.sprite.Group):
-        self.rect.x += round(self.x_vel)
+        self.true_x += self.x_vel * self.dt
+        self.rect.x = round(self.true_x)
+        print(self.true_x)
         for ground in pygame.sprite.spritecollide(self, ground_group, False):
             self.adjust_for_x_collisions(ground)
         for enemy in enemy_group:
@@ -76,7 +80,9 @@ class Player(pygame.sprite.Sprite):
                 self.adjust_for_x_enemy_collisions(bullet)
                 bullet.kill()
 
-        self.rect.y += round(self.y_vel)
+        self.true_y += self.y_vel * self.dt
+        self.rect.y = round(self.true_y)
+        print(self.true_y)
         for ground in pygame.sprite.spritecollide(self, ground_group, False):
             self.adjust_for_y_collisions(ground)
         for enemy in enemy_group:
@@ -164,10 +170,10 @@ class Player(pygame.sprite.Sprite):
             if self.can_jump:
                 self.state = c.JUMP
                 # Boost "running" jump
-                if abs(self.x_vel) > c.MAX_WALK_SPEED - 1.5:
-                    self.y_vel = c.FAST_JUMP_VEL
-                else:
-                    self.y_vel = c.JUMP_VEL
+                #if abs(self.x_vel) > c.MAX_WALK_SPEED - 1.5:
+                #    self.y_vel = c.FAST_JUMP_VEL
+                #else:
+                self.y_vel = c.JUMP_VEL
         if tools.keybinding(keys, c.LEFT):
             self.facing_right = False
             # Quick turn from the right
@@ -259,10 +265,10 @@ class Player(pygame.sprite.Sprite):
                 self.y_vel = c.JUMP_VEL
                 self.health -= 1
                 self.state = c.HURT
-            self.x_vel = 1
         else:
             self.rect.left = collider.rect.right
-            self.x_vel = -1
+        self.x_vel = 0
+        self.true_x = self.rect.x
 
     def adjust_for_x_enemy_collisions(self, collider: pygame.sprite.Sprite):
         # Bump away from obstacles
@@ -273,6 +279,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = collider.rect.right
             self.x_vel = -c.BUMP_VEL
         self.state = c.HURT
+        self.true_x = self.rect.x
 
     def adjust_for_y_collisions(self, collider: pygame.sprite.Sprite):
         if self.rect.y <= collider.rect.y:
@@ -285,6 +292,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = collider.rect.bottom
             self.y_vel = c.BUMP_VEL
             self.state = c.FALL
+        self.true_y = self.rect.y
 
     def adjust_for_y_enemy_collisions(self, collider: pygame.sprite.Sprite):
         # Bump away from obstacles
@@ -295,6 +303,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = collider.rect.bottom
             self.y_vel = c.BUMP_VEL
         self.state = c.HURT
+        self.true_y = self.rect.y
 
     def check_if_falling(self, colliders: pygame.sprite.Group):
         self.rect.y += 1
@@ -312,6 +321,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = 0
         elif self.rect.right > c.SCREEN_WIDTH:
             self.rect.right = c.SCREEN_WIDTH
+        self.true_x = self.rect.x
 
     # Animation Functions
 
@@ -320,7 +330,7 @@ class Player(pygame.sprite.Sprite):
             self.x_vel = 0
         if not ground_speed:
             ground_speed = 0
-        animation_speed = 0.2 - self.x_vel * 0.02 - ground_speed * 0.002
+        animation_speed = 0.2 - self.x_vel * 0.0002 - ground_speed * 0.002
         return animation_speed
 
     # State Helpers
