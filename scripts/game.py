@@ -83,10 +83,15 @@ class Game:
             ground_speed = ground.update(self.current_time)
         if not ground_speed:
             ground_speed = 0.0
+
+        # Update Background Scroll Speed
         self.scenery.update(ground_speed)
+
+        # Update Player Sprite Physics
         bullets = self.player.update(self.dt, ground_speed, self.keys)
         if bullets:
             self.all_sprites.add(bullets)
+
         # Spawn New Enemies
         if self.current_time - self.enemy_timer > 5:
             new_enemy = Enemy(self.enemy_bullet_group)
@@ -94,24 +99,34 @@ class Game:
             self.enemy_group.add([new_enemy])
             self.all_sprites.add([new_enemy])
             self.enemy_timer = self.current_time
+
+        # Update Enemy Sprite Physics
         for enemy in self.enemy_group:
             enemy_bullets = enemy.update(self.dt, self.player.rect.center)
             if enemy_bullets:
                 self.all_sprites.add(enemy_bullets)
+        
         self.reticle.update(self.dt)
         self.bullet_group.update()
         self.enemy_bullet_group.update()
-        # Adjust Positions
+
+        # Adjust Sprite Positions
         [ground.adjust_position() for ground in self.ground_group]
         self.scenery.adjust_position()
+
         self.player.adjust_position(self.ground_group, self.enemy_group, self.enemy_bullet_group)
+        
         for enemy in self.enemy_group:
             self.score += enemy.adjust_position(self.bullet_group)
+        
         [enemy.adjust_position(self.bullet_group) for enemy in self.enemy_group]
         [bullet.adjust_position() for bullet in self.bullet_group]
         [bullet.adjust_position() for bullet in self.enemy_bullet_group]
+        
+        # Increase Score Based on Ground Speed
         self.score += ground_speed * self.dt
-        # Adjust Player State
+        
+        # Check Player State
         if not self.player.alive:
             self.running = False
 
