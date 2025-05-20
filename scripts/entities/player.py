@@ -65,7 +65,6 @@ class Player(pygame.sprite.Sprite):
     def adjust_position(self, ground_group: pygame.sprite.Group, enemy_group: pygame.sprite.Group, enemy_bullet_group: pygame.sprite.Group):
         self.true_x += self.x_vel * self.dt
         self.rect.x = round(self.true_x)
-        print(self.true_x)
         for ground in pygame.sprite.spritecollide(self, ground_group, False):
             self.adjust_for_x_collisions(ground)
         for enemy in enemy_group:
@@ -82,7 +81,6 @@ class Player(pygame.sprite.Sprite):
 
         self.true_y += self.y_vel * self.dt
         self.rect.y = round(self.true_y)
-        print(self.true_y)
         for ground in pygame.sprite.spritecollide(self, ground_group, False):
             self.adjust_for_y_collisions(ground)
         for enemy in enemy_group:
@@ -330,7 +328,7 @@ class Player(pygame.sprite.Sprite):
             self.x_vel = 0
         if not ground_speed:
             ground_speed = 0
-        animation_speed = 0.2 - self.x_vel * 0.0002 - ground_speed * 0.002
+        animation_speed = 0.2 - ground_speed * 0.002 - self.x_vel * 0.0002
         return animation_speed
 
     # State Helpers

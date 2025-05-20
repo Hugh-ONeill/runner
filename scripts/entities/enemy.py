@@ -72,12 +72,14 @@ class Enemy(pygame.sprite.Sprite):
                 if self.current_time - self.swoop_timer > 10:
                     self.action_timer = self.current_time
                     self.swoop_timer = self.current_time
+                    self.hurt_timer = self.current_time
                     self.state = c.FLAP
             case c.SHOOT:
                 self.shooting()
                 if self.current_time - self.shoot_timer > 1:
                     self.action_timer = self.current_time
                     self.shoot_timer = self.current_time
+                    self.hurt_timer = self.current_time
                     self.state = c.FLAP
             case c.HURT:
                 self.hurting()
@@ -156,4 +158,5 @@ class Enemy(pygame.sprite.Sprite):
     def adjust_for_collisions(self, bullet: Bullet) -> int:
         bullet.kill()
         self.health -= 1
+        self.hurt_timer = self.current_time
         return self.hurting()
