@@ -21,13 +21,14 @@ class Scenery():
         
     def update(self, speed: float):
         self.speed = speed
-        if not self.speed:
+        if not self.speed or self.speed < 1:
             self.speed = 1.0
         [layer.update(self.speed) for layer in self.layers]
 
     def adjust_position(self):
         for layer in self.layers:
-            layer.rect.x -= round(self.speed * layer.speed_factor)
+            layer_speed = max(1, round(self.speed * layer.speed_factor))
+            layer.rect.x -= layer_speed
             if layer.rect.x < -c.SCREEN_WIDTH:
                 # Reset Position
                 layer.rect.x = 0

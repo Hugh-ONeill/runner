@@ -27,9 +27,8 @@ class Enemy(pygame.sprite.Sprite):
         self.hurt_timer = 0
         self.image = self.frames[0]
         self.rect = self.image.get_rect()
-        self.rect.x = c.SCREEN_WIDTH + c.TILE_SIZE
+        self.rect.x = random.choice([c.SCREEN_WIDTH + c.TILE_SIZE, -1 * c.TILE_SIZE])
         self.rect.top = c.ENEMY_HEIGHT + random.gauss(0, c.TILE_SIZE)
-        self.hitbox = self.rect
         self.state = c.SPAWN
         self.player_position = [0, 0]
         self.bullets = bullet_group
@@ -50,7 +49,7 @@ class Enemy(pygame.sprite.Sprite):
         #[self.adjust_for_collisions(bullet) for bullet in bullet_group if pygame.rect.Rect.colliderect(self.hitbox, bullet)]
         bonus = 0
         for bullet in bullet_group:
-            if pygame.rect.Rect.colliderect(self.hitbox, bullet):
+            if pygame.sprite.collide_mask(self, bullet):
                 bonus += self.adjust_for_collisions(bullet)
         #for bullet in pygame.sprite.spritecollide(self, bullet_group, False):
         #    self.adjust_for_collisions(bullet)
@@ -127,7 +126,6 @@ class Enemy(pygame.sprite.Sprite):
         self.state = c.SHOOT
         if self.current_time - self.bullet_timer > 2:
             bullet = Bullet(self.get_shooting_angle(), self.rect.centerx, self.rect.centery)
-            #print("enemy shooting a bullet")
             self.bullets.add(bullet)
             self.bullet_timer = self.current_time
 
@@ -137,8 +135,10 @@ class Enemy(pygame.sprite.Sprite):
 
     def spawning(self):
         self.state = c.SPAWN
+        # Change direction based on which side of the enemy screen spawned in
+        direction = -1 if self.rect.x < c.SCREEN_WIDTH // 2 else 1
         if self.current_time - self.spawn_timer < 10:
-            self.rect.x -= abs(math.cos(self.current_time)) * random.choice([1, 2, 3])
+            self.rect.x -= direction * abs(math.cos(self.current_time)) * random.choice([1, 2, 3])
             self.rect.top += math.sin(self.current_time) * random.choice([0, 1, 2])
         else:
             self.state = c.FLAP

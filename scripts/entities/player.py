@@ -64,27 +64,33 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += round(self.x_vel)
         for ground in pygame.sprite.spritecollide(self, ground_group, False):
             self.adjust_for_x_collisions(ground)
-        for enemy in pygame.sprite.spritecollide(self, enemy_group, False):
-            if self.state != c.HURT:
-                self.health -= 1
-            self.adjust_for_x_enemy_collisions(enemy)
-        for enemy in pygame.sprite.spritecollide(self, enemy_bullet_group, False):
-            if self.state != c.HURT:
-                self.health -= 1
-            self.adjust_for_x_enemy_collisions(enemy)
-            enemy.kill()
+        for enemy in enemy_group:
+            if pygame.sprite.collide_mask(self, enemy):
+                if self.state != c.HURT:
+                    self.health -= 1
+                self.adjust_for_x_enemy_collisions(enemy)
+        for bullet in enemy_bullet_group:
+            if pygame.sprite.collide_mask(self, bullet):
+                if self.state != c.HURT:
+                    self.health -= 1
+                self.adjust_for_x_enemy_collisions(bullet)
+                bullet.kill()
+
         self.rect.y += round(self.y_vel)
         for ground in pygame.sprite.spritecollide(self, ground_group, False):
             self.adjust_for_y_collisions(ground)
-        for enemy in pygame.sprite.spritecollide(self, enemy_group, False):
-            if self.state != c.HURT:
-                self.health -= 1
-            self.adjust_for_y_enemy_collisions(enemy)
-        for enemy in pygame.sprite.spritecollide(self, enemy_bullet_group, False):
-            if self.state != c.HURT:
-                self.health -= 1
-            self.adjust_for_y_enemy_collisions(enemy)
-            enemy.kill()
+        for enemy in enemy_group:
+            if pygame.sprite.collide_mask(self, enemy):
+                if self.state != c.HURT:
+                    self.health -= 1
+                self.adjust_for_y_enemy_collisions(enemy)
+        for bullet in enemy_bullet_group:
+            if pygame.sprite.collide_mask(self, bullet):
+                if self.state != c.HURT:
+                    self.health -= 1
+                self.adjust_for_y_enemy_collisions(bullet)
+                bullet.kill()
+
         self.check_if_falling(ground_group)
         self.check_if_dying()
         self.clamp()
@@ -259,12 +265,14 @@ class Player(pygame.sprite.Sprite):
             self.x_vel = -1
 
     def adjust_for_x_enemy_collisions(self, collider: pygame.sprite.Sprite):
+        # Bump away from obstacles
         if self.rect.x < collider.rect.x:
             self.rect.right = collider.rect.left
             self.x_vel = c.BUMP_VEL
         else:
             self.rect.left = collider.rect.right
             self.x_vel = -c.BUMP_VEL
+        self.state = c.HURT
 
     def adjust_for_y_collisions(self, collider: pygame.sprite.Sprite):
         if self.rect.y <= collider.rect.y:
@@ -273,22 +281,20 @@ class Player(pygame.sprite.Sprite):
             self.y_vel = 0
             self.state = c.WALK
         else:
-            # Bump against top obstacle
+            # Bump against obstacle
             self.rect.top = collider.rect.bottom
             self.y_vel = c.BUMP_VEL
             self.state = c.FALL
 
     def adjust_for_y_enemy_collisions(self, collider: pygame.sprite.Sprite):
+        # Bump away from obstacles
         if self.rect.y <= collider.rect.y:
-            # Bump away from obstacle
             self.rect.bottom = collider.rect.top
             self.y_vel = -c.BUMP_VEL
-            self.state = c.HURT
         else:
-            # Bump against top obstacle
             self.rect.top = collider.rect.bottom
             self.y_vel = c.BUMP_VEL
-            self.state = c.HURT
+        self.state = c.HURT
 
     def check_if_falling(self, colliders: pygame.sprite.Group):
         self.rect.y += 1
@@ -314,7 +320,7 @@ class Player(pygame.sprite.Sprite):
             self.x_vel = 0
         if not ground_speed:
             ground_speed = 0
-        animation_speed = 0.13 - self.x_vel * .0013 * ground_speed
+        animation_speed = 0.2 - self.x_vel * 0.02 - ground_speed * 0.002
         return animation_speed
 
     # State Helpers
