@@ -13,7 +13,7 @@ class Scenery():
         self.frontleaves = tools.get_sprite('scenery', 'frontleaves', 0, 0, 512, 300)
         self.bushes = tools.get_sprite('scenery', 'bushes', 0, 0, 512, 300)
         self.tiles = math.ceil(c.SCREEN_WIDTH / 512) + 1
-        self.layers = [SceneLayer(self.backgrounds[layer], index, self.tiles) for index, layer in enumerate(range(3, 0, -1))]
+        self.layers = [SceneLayer(self.backgrounds[layer], index, self.tiles) for index, layer in enumerate(range(3, -1, -1))]
         self.layers.append(SceneLayer(self.trees, 4, self.tiles))
         self.layers.append(SceneLayer(self.frontleaves, 4, self.tiles))
         self.layers.append(SceneLayer(self.bushes, 5, self.tiles))

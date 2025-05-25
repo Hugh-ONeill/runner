@@ -116,13 +116,13 @@ class Enemy(pygame.sprite.Sprite):
 
     def flapping(self):
         self.state = c.FLAP
-        self.rect.x += math.cos(self.current_time) * random.choice([1, 2, 3])
-        self.rect.top -= math.sin(self.current_time) * random.choice([0, 1, 2])
+        self.rect.x += math.cos(self.current_time) * random.choice([1, 2, 3]) * 55 * self.dt
+        self.rect.top -= math.sin(self.current_time) * random.choice([0, 1, 2]) * 55 * self.dt
 
     def swooping(self):
         self.state = c.SWOOP
-        self.rect.x += math.cos(self.current_time) * random.choice([1, 2, 3])
-        self.rect.top += math.sin(self.current_time) * random.choice([2, 3, 4])
+        self.rect.x += math.cos(self.current_time) * random.choice([1, 2, 3]) * 55 * self.dt
+        self.rect.top += math.sin(self.current_time) * random.choice([2, 3, 4]) * 55 * self.dt
 
     def shooting(self):
         self.state = c.SHOOT
@@ -140,8 +140,8 @@ class Enemy(pygame.sprite.Sprite):
         # Change direction based on which side of the enemy screen spawned in
         direction = -1 if self.rect.x < c.SCREEN_WIDTH // 2 else 1
         if self.current_time - self.spawn_timer < 10:
-            self.rect.x -= direction * abs(math.cos(self.current_time)) * random.choice([1, 2, 3])
-            self.rect.top += math.sin(self.current_time) * random.choice([0, 1, 2])
+            self.rect.x -= direction * abs(math.cos(self.current_time)) * random.choice([1, 2, 3]) * 55 * self.dt
+            self.rect.top += math.sin(self.current_time) * random.choice([0, 1, 2]) * 55 * self.dt
         else:
             self.state = c.FLAP
             self.action_timer = self.current_time
