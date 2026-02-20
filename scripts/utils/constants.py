@@ -21,6 +21,7 @@ JUMP_VEL = -750
 FAST_JUMP_VEL = -1000
 MAX_Y_VEL = 1000
 BUMP_VEL = 70
+INVINCIBLE_DURATION = 1.0
 
 MAX_RUN_SPEED = 800
 MAX_WALK_SPEED = 600
@@ -32,6 +33,7 @@ WALK = 'walking'
 JUMP = 'jumping'
 FALL = 'falling'
 HURT = 'hurting'
+DEAD = 'dead'
 SHOOT = 'shooting'
 
 # ENEMY STATES

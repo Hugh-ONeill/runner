@@ -35,7 +35,9 @@ class Player(pygame.sprite.Sprite):
         self.can_shoot = True
         self.bullet_timer = 0
         self.facing_right = True
-        self.health = 3        
+        self.health = 3
+        self.alive = True
+        self.invincible_timer = -c.INVINCIBLE_DURATION
         self.frame = 0
         self.current_time = 0
         self.walk_cycle_timer = 0
@@ -61,22 +63,39 @@ class Player(pygame.sprite.Sprite):
                 self.falling(keys)
             case c.HURT:
                 self.falling(keys)
+            case c.DEAD:
+                self.dying()
+
+    def is_invincible(self):
+        return self.current_time - self.invincible_timer < c.INVINCIBLE_DURATION
 
     def adjust_position(self, ground_group: pygame.sprite.Group, enemy_group: pygame.sprite.Group, enemy_bullet_group: pygame.sprite.Group):
+        # during death animation, skip all collisions and fall off screen
+        if self.state == c.DEAD:
+            self.true_x += self.x_vel * self.dt
+            self.rect.x = round(self.true_x)
+            self.true_y += self.y_vel * self.dt
+            self.rect.y = round(self.true_y)
+            if self.rect.top > c.SCREEN_HEIGHT:
+                self.alive = False
+            return
+
         self.true_x += self.x_vel * self.dt
         self.rect.x = round(self.true_x)
         for ground in pygame.sprite.spritecollide(self, ground_group, False):
             self.adjust_for_x_collisions(ground)
         for enemy in enemy_group:
             if pygame.sprite.collide_mask(self, enemy):
-                if self.state != c.HURT:
+                if not self.is_invincible():
                     self.health -= 1
-                self.adjust_for_x_enemy_collisions(enemy)
+                    self.invincible_timer = self.current_time
+                    self.adjust_for_x_enemy_collisions(enemy)
         for bullet in enemy_bullet_group:
             if pygame.sprite.collide_mask(self, bullet):
-                if self.state != c.HURT:
+                if not self.is_invincible():
                     self.health -= 1
-                self.adjust_for_x_enemy_collisions(bullet)
+                    self.invincible_timer = self.current_time
+                    self.adjust_for_x_enemy_collisions(bullet)
                 bullet.kill()
 
         self.true_y += self.y_vel * self.dt
@@ -85,14 +104,16 @@ class Player(pygame.sprite.Sprite):
             self.adjust_for_y_collisions(ground)
         for enemy in enemy_group:
             if pygame.sprite.collide_mask(self, enemy):
-                if self.state != c.HURT:
+                if not self.is_invincible():
                     self.health -= 1
-                self.adjust_for_y_enemy_collisions(enemy)
+                    self.invincible_timer = self.current_time
+                    self.adjust_for_y_enemy_collisions(enemy)
         for bullet in enemy_bullet_group:
             if pygame.sprite.collide_mask(self, bullet):
-                if self.state != c.HURT:
+                if not self.is_invincible():
                     self.health -= 1
-                self.adjust_for_y_enemy_collisions(bullet)
+                    self.invincible_timer = self.current_time
+                    self.adjust_for_y_enemy_collisions(bullet)
                 bullet.kill()
 
         self.check_if_falling(ground_group)
@@ -121,6 +142,22 @@ class Player(pygame.sprite.Sprite):
                         self.frame = 0
                     self.hurt_cycle_timer = self.current_time
                 self.image = self.hurting_sprites[self.frame]
+            case c.DEAD:
+                if self.current_time - self.hurt_cycle_timer > 0.1:
+                    if self.frame < 3:
+                        self.frame += 1
+                    else:
+                        self.frame = 0
+                    self.hurt_cycle_timer = self.current_time
+                self.image = self.hurting_sprites[self.frame]
+        # i-frame flicker
+        if self.is_invincible():
+            if self.current_time % 0.2 < 0.1:
+                self.image.set_alpha(64)
+            else:
+                self.image.set_alpha(255)
+        else:
+            self.image.set_alpha(255)
 
     # State Functions
 
@@ -253,6 +290,11 @@ class Player(pygame.sprite.Sprite):
             if self.x_vel < self.max_x_vel:
                 self.x_vel += self.x_accel
 
+    def dying(self):
+        self.x_vel = 0
+        if self.y_vel < c.MAX_Y_VEL:
+            self.y_vel += self.gravity
+
     # Collision Functions
 
     def adjust_for_x_collisions(self, collider: pygame.sprite.Sprite):
@@ -261,7 +303,10 @@ class Player(pygame.sprite.Sprite):
             # Pinched off of screen
             if self.rect.left < 0:
                 self.y_vel = c.JUMP_VEL
-                self.health -= 1
+                if not self.is_invincible():
+                    self.health -= 1
+                    self.invincible_timer = self.current_time
+                self.frame = 0
                 self.state = c.HURT
         else:
             self.rect.left = collider.rect.right
@@ -276,6 +321,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.left = collider.rect.right
             self.x_vel = -c.BUMP_VEL
+        self.frame = 0
         self.state = c.HURT
         self.true_x = self.rect.x
 
@@ -300,19 +346,25 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.top = collider.rect.bottom
             self.y_vel = c.BUMP_VEL
+        self.frame = 0
         self.state = c.HURT
         self.true_y = self.rect.y
 
     def check_if_falling(self, colliders: pygame.sprite.Group):
         self.rect.y += 1
         if not pygame.sprite.spritecollideany(self, colliders):
-            if self.state != c.JUMP and self.state != c.HURT:
+            if self.state not in (c.JUMP, c.HURT, c.DEAD):
                 self.state = c.FALL
         self.rect.y -= 1
 
     def check_if_dying(self):
-        if self.health < 1 or self.rect.bottom > c.SCREEN_HEIGHT:
+        if self.rect.bottom > c.SCREEN_HEIGHT:
             self.alive = False
+        elif self.health < 1 and self.state != c.DEAD:
+            self.frame = 0
+            self.state = c.DEAD
+            self.y_vel = c.JUMP_VEL
+            self.x_vel = 0
 
     def clamp(self):
         if self.rect.left < 0:
